@@ -4,21 +4,41 @@ import support.BSTNode;
 public class AVLThreadedBST<T> extends BinarySearchTree<T>
 {
    protected boolean leftNode;
-   protected boolean leftSubTree;
    public void Balance()
    {
       //TODO: MAKE THIS
    }
    
-   protected void RotateLeft()
+   protected void RotateLeft(BSTNode<T> node)
    {
-      //TODO: MAKE THIS
+      BSTNode<T> prenode = getPredecessor(node);
+      if (prenode.getLeft() == node) {prenode.setLeft(node.getLeft());}
+      else {prenode.setRight(node.getLeft());}
+      node.setLeft(null);
    }
-   protected void RotateRight()
+   protected void RotateRight(BSTNode<T> node)
    {
-      //TODO: MAKE THIS
+      BSTNode<T> prenode = getPredecessor(node);
+      if (prenode.getLeft() == node) {prenode.setLeft(node.getLeft());}
+      else {prenode.setRight(node.getLeft());}
+      node.setRight(null);
    }
    
+   protected BSTNode<T> getPredecessor(BSTNode<T> node)
+   {
+      if (isEmpty()) {return null;}
+      BSTNode<T> search = root;
+      do
+      {
+         if (search.getLeft() == node || search.getRight() == node) {return search;}
+         if (comp.compare(node.getInfo(), search.getInfo()) <= 0) {search = search.getLeft();}
+         else {search = search.getRight();}
+      }
+      while (search.getLeft() != null || search.getRight() != null);
+      //If this is triggered, something went horribly wrong
+      return null;
+      
+   }
    @Override
    public boolean add(T element)
    {
@@ -29,7 +49,8 @@ public class AVLThreadedBST<T> extends BinarySearchTree<T>
          root = node;
          return true;
       }
-      LinkedStack<BSTNode<T>> stack = new LinkedStack<>();
+      LinkedStack<BSTNode<T>> stackRight = new LinkedStack<>();
+      LinkedStack<BSTNode<T>> stackLeft = new LinkedStack<>();
       BSTNode<T> node = root;
       BSTNode<T> previousnode = root;
       while (node != null)
@@ -39,37 +60,27 @@ public class AVLThreadedBST<T> extends BinarySearchTree<T>
          {
             node = node.getLeft();
             leftNode = true;
-            if (previousnode == root)
-            {
-               leftSubTree = true;
-            }
+            stackLeft.push(previousnode);
+
          }
          else
          {
             node = node.getRight();  
             leftNode = false;
-            stack.push(previousnode);
-            if (previousnode == root)
-            {
-               leftSubTree = false;
-            }
+            stackRight.push(previousnode);
          }
       }
       if (leftNode)
       {
          previousnode.setLeft(node);
          node.setRight(previousnode);
-         if (!stack.isEmpty())
-         node.setLeft(stack.top());
+         if (!stackRight.isEmpty()) {node.setLeft(stackRight.top());}
       }
       else
       {
          previousnode.setRight(node);
          node.setLeft(previousnode);
-         if (leftSubTree)
-         {
-            node.setRight(root);
-         }
+         if (!stackLeft.isEmpty()) {node.setRight(stackLeft.top());}
       }
       return true;
    }

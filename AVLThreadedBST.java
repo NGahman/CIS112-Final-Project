@@ -157,4 +157,9 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       while (search.getLeft() != null || search.getRight() != null);
       return null;
    }
+   
+   public boolean contains(T element)
+   {
+      return (contains(element) != null);
+   }
 }

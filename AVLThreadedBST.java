@@ -1,9 +1,10 @@
 import java.util.*;   // Iterator, Comparator
+import ch07.trees.BSTInterface;
 import ch05.collections.LinkedCollection;
 import ch02.stacks.LinkedStack;
 import support.BSTNode; 
 
-public class AVLThreadedBST<T>
+public class AVLThreadedBST<T> implements BSTInterface<T>
 {
    protected BSTNode<T> root;      // reference to the root of this BST
    protected Comparator<T> comp;   // used for all comparisons
@@ -67,7 +68,7 @@ public class AVLThreadedBST<T>
       return null;
       
    }
-   @Override
+   
    public boolean add(T element)
    {
       if (isFull()) {return false;}
@@ -132,14 +133,28 @@ public class AVLThreadedBST<T>
       if (isEmpty()) {return 0;}
       int count = 0;
       BSTNode<T> node = root;
-      LinkedCollection<BSTNode<T> link = new LinkedCollection<>();
+      LinkedCollection<BSTNode<T>> link = new LinkedCollection<>();
       while (node != null)
       {
          link.add(node);
-         if (!link.contains(node) {count++;}
-         if (node.getLeft() != null && !link.contains(node.getLeft()) {node = node.getLeft();}
+         if (!link.contains(node)) {count++;}
+         if (node.getLeft() != null && !link.contains(node.getLeft())) {node = node.getLeft();}
          else {node = node.getRight();}
       }
       return count;
+   }
+   
+   public T get(T element)
+   {
+      if (isEmpty()) {return null;}
+      BSTNode<T> search = root;
+      do
+      {
+         if (search.getInfo() == element) {return search.getInfo();}
+         if (comp.compare(element, search.getInfo()) <= 0) {search = search.getLeft();}
+         else {search = search.getRight();}
+      }
+      while (search.getLeft() != null || search.getRight() != null);
+      return null;
    }
 }

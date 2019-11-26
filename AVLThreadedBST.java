@@ -1,9 +1,37 @@
-import ch07.trees.BinarySearchTree;
+import java.util.*;   // Iterator, Comparator
+import ch04.queues.*;
 import ch02.stacks.LinkedStack;
 import support.BSTNode; 
-public class AVLThreadedBST<T> extends BinarySearchTree<T>
+
+public class AVLThreadedBST<T>
 {
+   protected BSTNode<T> root;      // reference to the root of this BST
+   protected Comparator<T> comp;   // used for all comparisons
    protected boolean leftNode;
+   protected boolean found;   // used by remove
+
+   public AVLThreadedBST() 
+   // Precondition: T implements Comparable
+   // Creates an empty BST object - uses the natural order of elements.
+   {
+      root = null;
+      comp = new Comparator<T>()
+      {
+         public int compare(T element1, T element2)
+         {
+            return ((Comparable)element1).compareTo(element2);
+         }
+      };
+   }
+   
+   public AVLThreadedBST(Comparator<T> comp) 
+  // Creates an empty BST object - uses Comparator comp for order
+  // of elements.
+  {
+    root = null;
+    this.comp = comp;
+  }
+  
    public void Balance()
    {
       //TODO: MAKE THIS
@@ -83,5 +111,26 @@ public class AVLThreadedBST<T> extends BinarySearchTree<T>
          if (!stackLeft.isEmpty()) {node.setRight(stackLeft.top());}
       }
       return true;
+   }
+   
+   
+   public boolean isFull()
+   // Returns false; this link-based BST is never full.
+   {
+      return false;
+   }
+
+   public boolean isEmpty()
+   // Returns true if this BST is empty; otherwise, returns false.
+   {
+      return (root == null);
+   }
+  
+   public int size()
+   // Returns the number of elements in this BST.
+   {
+      if (isEmpty()) {return 0;}
+      BSTNode<T> newNode = root;
+      
    }
 }

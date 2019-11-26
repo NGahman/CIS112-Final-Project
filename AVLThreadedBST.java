@@ -1,5 +1,5 @@
 import java.util.*;   // Iterator, Comparator
-import ch04.queues.*;
+import ch05.collections.LinkedCollection;
 import ch02.stacks.LinkedStack;
 import support.BSTNode; 
 
@@ -130,7 +130,16 @@ public class AVLThreadedBST<T>
    // Returns the number of elements in this BST.
    {
       if (isEmpty()) {return 0;}
-      BSTNode<T> newNode = root;
-      
+      int count = 0;
+      BSTNode<T> node = root;
+      LinkedCollection<BSTNode<T> link = new LinkedCollection<>();
+      while (node != null)
+      {
+         link.add(node);
+         if (!link.contains(node) {count++;}
+         if (node.getLeft() != null && !link.contains(node.getLeft()) {node = node.getLeft();}
+         else {node = node.getRight();}
+      }
+      return count;
    }
 }

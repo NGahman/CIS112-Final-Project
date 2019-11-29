@@ -49,8 +49,9 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    protected void RotateRight(BSTNode<T> node)
    {
       BSTNode<T> prenode = getPredecessor(node);
-      if (prenode.getLeft() == node) {prenode.setLeft(node.getLeft());}
-      else {prenode.setRight(node.getLeft());}
+      if (prenode.getLeft() == node) {prenode.setLeft(node.getRight());}
+      else {prenode.setRight(node.getRight());}
+      node.getRight().setLeft(node);
       node.setRight(null);
    }
    
@@ -99,17 +100,9 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             leftNode = false;
          }
       }
-      if (leftNode) 
-      {
-         previousnode.setLeft(node);
-         node.setRight(previousnode);
-      }
-      else
-      {
-         previousnode.setRight(node);
-         node.setLeft(previousnode);
-         if (!stackRight.isEmpty()) {node.setRight(stackRight.top());}
-      }
+      if (leftNode) (previousnode.setLeft(node);}
+      else {previousnode.setRight(node);}
+      if (!stackRight.isEmpty()) {node.setRight(stackRight.top());}
       numElements++;
       return true;
    }
@@ -174,6 +167,17 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          BSTNode<T> node = root;
          while (node.getLeft() != null) {node = node.getRight();}
          return node.getInfo();
+      }
+   }
+   public boolean remove(T target)
+   {
+      if (isEmpty()) {return false;}
+      removeNode = get(target);
+      preNode = getPredecessor(removeNode);
+      editNode = removeNode;
+      if (removeNode.getLeft() == null)
+      {
+         if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.get
       }
    }
 }

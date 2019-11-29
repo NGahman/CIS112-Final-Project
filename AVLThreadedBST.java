@@ -1,6 +1,7 @@
 package FinalProject;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import bookFiles.ch07.trees.BSTInterface;
@@ -46,6 +47,31 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
     }
 
     public Iterator<T> getIterator(Traversal orderType) {//TODO
+        if (orderType == Traversal.Inorder) {
+            return new Iterator<>() {
+                private int numIterated = 0;
+                private HashSet<BSTNode<T>> visited = new HashSet<>();
+                private BSTNode<T> node = root;
+
+                public boolean hasNext() {
+                    return numIterated != numElements;
+                }
+
+                public T next() {
+                    T out;
+                    if (node.getLeft() == null || visited.contains(node.getLeft())) {
+                        out = node.getInfo();
+                        node = node.getRight();
+                        numIterated++;
+                    } else {
+                        node = node.getLeft();
+                        visited.add(node);
+                        out = next();
+                    }
+                    return out;
+                }
+            };
+        }
         return null;
     }
 
@@ -53,7 +79,6 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         numElements++;
         if (root == null) {
             root = new BSTNode<>(element);
-            root.setLeft(root);
             root.setRight(root);
         }
         return true;

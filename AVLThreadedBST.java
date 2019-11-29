@@ -3,6 +3,7 @@ package FinalProject;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import bookFiles.ch07.trees.BSTInterface;
 import bookFiles.support.BSTNode;
@@ -58,6 +59,9 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
                 }
 
                 public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException();
+                    }
                     T out;
                     if (node.getLeft() == null || visited.contains(node.getLeft())) {
                         out = node.getInfo();

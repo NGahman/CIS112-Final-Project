@@ -23,12 +23,26 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         this.comp = comp;
     }
 
-    public T min() {//TODO
-        return null;
+    public T min() {
+        if (isEmpty()) {
+            return null;
+        }
+        BSTNode<T> node = root;
+        while (node.getLeft() != null) {
+            node = node.getLeft();
+        }
+        return node.getInfo();
     }
 
-    public T max() {//TODO
-        return null;
+    public T max() {
+        if (isEmpty()) {
+            return null;
+        }
+        BSTNode<T> node = root;
+        while (node.getRight() != null) {
+            node = node.getRight();
+        }
+        return node.getInfo();
     }
 
     public Iterator<T> getIterator(Traversal orderType) {//TODO
@@ -37,7 +51,12 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
 
     public boolean add(T element) {//TODO
         numElements++;
-        return false;
+        if (root == null) {
+            root = new BSTNode<>(element);
+            root.setLeft(root);
+            root.setRight(root);
+        }
+        return true;
     }
 
     public T get(T target) {//TODO
@@ -67,5 +86,9 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
 
     public Iterator<T> iterator() {
         return getIterator(Traversal.Inorder);
+    }
+
+    private void reBalance() {//TODO
+        ;
     }
 }

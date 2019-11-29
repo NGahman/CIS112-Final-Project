@@ -160,6 +160,31 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    
    public boolean contains(T element)
    {
-      return (contains(element) != null);
+      return (get(element) != null);
+   }
+   public T min()
+   // If this BST is empty, returns null;
+   // otherwise returns the smallest element of the tree.
+   {
+      if (isEmpty()) {return null;}
+      else
+      {
+         BSTNode<T> node = root;
+         while (node.getLeft() != null) {node = node.getLeft();}
+         return node.getInfo();
+      }
+   }
+
+  public T max()
+  // If this BST is empty, returns null;
+  // otherwise returns the largest element of the tree.
+  {
+      if (isEmpty()) {return null;}
+      else
+      {
+         BSTNode<T> node = root;
+         while (node.getLeft() != null) {node = node.getRight();}
+         return node.getInfo();
+      }
    }
 }

@@ -8,7 +8,6 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
 {
    protected BSTNode<T> root;      // reference to the root of this BST
    protected Comparator<T> comp;   // used for all comparisons
-   protected boolean leftNode;
    protected boolean found;   // used by remove
 
    public AVLThreadedBST() 
@@ -71,6 +70,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    
    public boolean add(T element)
    {
+      boolean leftNode;
       if (isFull()) {return false;}
       if (root == null)
       {
@@ -79,7 +79,6 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          return true;
       }
       LinkedStack<BSTNode<T>> stackRight = new LinkedStack<>();
-      LinkedStack<BSTNode<T>> stackLeft = new LinkedStack<>();
       BSTNode<T> node = root;
       BSTNode<T> previousnode = root;
       while (node != null)
@@ -89,27 +88,25 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          {
             node = node.getLeft();
             leftNode = true;
-            stackLeft.push(previousnode);
+            stackRight.push(previousnode);
 
          }
          else
          {
             node = node.getRight();  
             leftNode = false;
-            stackRight.push(previousnode);
          }
       }
-      if (leftNode)
+      if (leftNode) 
       {
          previousnode.setLeft(node);
          node.setRight(previousnode);
-         if (!stackRight.isEmpty()) {node.setLeft(stackRight.top());}
       }
       else
       {
          previousnode.setRight(node);
          node.setLeft(previousnode);
-         if (!stackLeft.isEmpty()) {node.setRight(stackLeft.top());}
+         if (!stackRight.isEmpty()) {node.setRight(stackLeft.top());}
       }
       return true;
    }
@@ -136,9 +133,12 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       LinkedCollection<BSTNode<T>> link = new LinkedCollection<>();
       while (node != null)
       {
-         link.add(node);
          if (!link.contains(node)) {count++;}
-         if (node.getLeft() != null && !link.contains(node.getLeft())) {node = node.getLeft();}
+         if (node.getLeft() != null && !link.contains(node.getLeft())) 
+         {
+            link.add(node);
+            node = node.getLeft();
+         }
          else {node = node.getRight();}
       }
       return count;

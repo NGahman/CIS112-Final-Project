@@ -108,7 +108,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       {
          previousnode.setRight(node);
          node.setLeft(previousnode);
-         if (!stackRight.isEmpty()) {node.setRight(stackLeft.top());}
+         if (!stackRight.isEmpty()) {node.setRight(stackRight.top());}
       }
       numElements++;
       return true;
@@ -142,7 +142,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          if (search.getInfo() == element) {return search.getInfo();}
          if (comp.compare(element, search.getInfo()) <= 0) {search = search.getLeft();}
          else {search = search.getRight();}
-      Nul
+      }
       while (search.getLeft() != null || search.getRight() != null);
       return null;
    }

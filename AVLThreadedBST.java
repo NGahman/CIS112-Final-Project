@@ -9,12 +9,14 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    protected BSTNode<T> root;      // reference to the root of this BST
    protected Comparator<T> comp;   // used for all comparisons
    protected boolean found;   // used by remove
+   protected int numElements;
 
    public AVLThreadedBST() 
    // Precondition: T implements Comparable
    // Creates an empty BST object - uses the natural order of elements.
    {
       root = null;
+      numElements = 0;
       comp = new Comparator<T>()
       {
          public int compare(T element1, T element2)
@@ -108,6 +110,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          node.setLeft(previousnode);
          if (!stackRight.isEmpty()) {node.setRight(stackLeft.top());}
       }
+      numElements++;
       return true;
    }
    
@@ -127,21 +130,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    public int size()
    // Returns the number of elements in this BST.
    {
-      if (isEmpty()) {return 0;}
-      int count = 0;
-      BSTNode<T> node = root;
-      LinkedCollection<BSTNode<T>> link = new LinkedCollection<>();
-      while (node != null)
-      {
-         if (!link.contains(node)) {count++;}
-         if (node.getLeft() != null && !link.contains(node.getLeft())) 
-         {
-            link.add(node);
-            node = node.getLeft();
-         }
-         else {node = node.getRight();}
-      }
-      return count;
+      return numElements;
    }
    
    public T get(T element)
@@ -153,7 +142,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          if (search.getInfo() == element) {return search.getInfo();}
          if (comp.compare(element, search.getInfo()) <= 0) {search = search.getLeft();}
          else {search = search.getRight();}
-      }
+      Nul
       while (search.getLeft() != null || search.getRight() != null);
       return null;
    }

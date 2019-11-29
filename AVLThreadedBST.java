@@ -100,7 +100,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             leftNode = false;
          }
       }
-      if (leftNode) (previousnode.setLeft(node);}
+      if (leftNode) {previousnode.setLeft(node);}
       else {previousnode.setRight(node);}
       if (!stackRight.isEmpty()) {node.setRight(stackRight.top());}
       numElements++;
@@ -172,12 +172,64 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    public boolean remove(T target)
    {
       if (isEmpty()) {return false;}
-      removeNode = get(target);
-      preNode = getPredecessor(removeNode);
-      editNode = removeNode;
+      BSTNode<T> removeNode = root;
+      BSTNode<T> preNode = getPredecessor(removeNode);
+      BSTNode<T> editNode = removeNode;
+      
+      while (removeNode.getInfo() == target)
+      {
+         if (comp.compare(target, removeNode.getInfo()) <= 0) {removeNode = removeNode.getLeft();}
+         else {removeNode = removeNode.getRight();}
+      }
+      
       if (removeNode.getLeft() == null)
       {
-         if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.get
+         if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
+         else {preNode.setLeft(removeNode.getRight());}
+      }
+      else
+      {
+         editNode = removeNode.getLeft();
+         while (editNode.getRight() != removeNode)
+         {
+            editNode = editNode.getRight();
+         }
+         editNode.setRight(null);
+         if (removeNode.getRight() == null)
+         {
+            if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
+            else {preNode.setLeft(removeNode.getRight());}
+         }
+         else
+         {
+            BSTNode<T> removeLeftNode = removeNode.getLeft();
+            BSTNode<T> removeRightNode = removeNode.getRight();
+            BSTNode<T> preRemoveLeftNode = removeNode.getLeft();
+            BSTNode<T> preRemoveRightNode = removeNode.getRight();
+            while (removeRightNode.getLeft() != null && removeLeftNode.getRight() != null)
+            {
+               preRemoveLeftNode = removeLeftNode;
+               preRemoveRightNode = removeRightNode;
+               removeLeftNode = removeLeftNode.getRight();
+               removeRightNode = removeRightNode.getLeft();
+            }
+            if (removeLeftNode.getRight() == null)
+            {
+               preRemoveLeftNode.setRight(removeLeftNode.getLeft());
+               if (preNode.getRight() == removeNode) {preNode.setRight(removeLeftNode);}
+               else {preNode.setLeft(removeLeftNode);}
+               removeLeftNode.setLeft(removeNode.getLeft());
+               removeLeftNode.setRight(removeNode.getRight());
+            }
+            else
+            {
+               preRemoveRightNode.setRight(removeRightNode.getRight());
+               if (preNode.getRight() == removeNode) {preNode.setRight(removeRightNode);}
+               else {preNode.setLeft(removeRightNode);}
+               removeRightNode.setLeft(removeNode.getLeft());
+               removeRightNode.setRight(removeNode.getRight());
+            }
+         }
       }
    }
 }

@@ -176,7 +176,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       BSTNode<T> preNode = getPredecessor(removeNode);
       BSTNode<T> editNode = removeNode;
       
-      while (removeNode.getInfo() == target)
+      while (removeNode.getInfo() != target)
       {
          if (comp.compare(target, removeNode.getInfo()) <= 0) {removeNode = removeNode.getLeft();}
          else {removeNode = removeNode.getRight();}
@@ -231,5 +231,6 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             }
          }
       }
+      return true;
    }
 }

@@ -10,7 +10,9 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    protected Comparator<T> comp;   // used for all comparisons
    protected boolean found;   // used by remove
    protected int numElements;
-
+   
+   
+   //Written by Nicholas
    public AVLThreadedBST() 
    // Precondition: T implements Comparable
    // Creates an empty BST object - uses the natural order of elements.
@@ -26,6 +28,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       };
    }
    
+   //Written by Nicholas
    public AVLThreadedBST(Comparator<T> comp) 
   // Creates an empty BST object - uses Comparator comp for order
   // of elements.
@@ -34,13 +37,14 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
     numElements = 0;
     this.comp = comp;
   }
-  
+   //Written by Corey
    public void Balance()
    //Recursively goes through the tree and calls RotateLeft and RotateRight to turn the tree into a complete tree.
    {
       //TODO: MAKE THIS
    }
    
+   //Written by Nicholas
    protected void RotateLeft(BSTNode<T> node)
    //Given a node, rotates the subtree such that the node's right link becomes the root, and links to the node.
    {
@@ -50,6 +54,8 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       node.setLeft(null);
       //No need to link the left link to the node, because threading already does that
    }
+   
+   //Written by Nicholas
    protected void RotateRight(BSTNode<T> node)
    //Given a node, rotates the subtree such that the node's left link becomes the root, and links to the node.
    {
@@ -60,6 +66,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       node.setRight(null);
    }
    
+   //Written by Nicholas
    protected BSTNode<T> getPredecessor(BSTNode<T> node)
    //Gets the immediate predecessor of the node
    {
@@ -77,9 +84,11 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       
    }
    
+   
+   //Written by Nicholas
    public boolean add(T element)
    {
-      boolean leftNode;
+      boolean leftNode = true;
       if (isFull()) {return false;}
       if (root == null)
       {
@@ -116,25 +125,28 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       return true;
    }
    
-   
+   //Written by Nicholas
    public boolean isFull()
    // Returns false; this link-based BST is never full.
    {
       return false;
    }
-
+   
+   //Written by Nicholas
    public boolean isEmpty()
    // Returns true if this BST is empty; otherwise, returns false.
    {
       return (root == null);
    }
-  
+   
+   //Written by Nicholas
    public int size()
    // Returns the number of elements in this BST.
    {
       return numElements;
    }
    
+   //Written by Nicholas
    protected BSTNode<T> getNode(T element)
    //Gets the node that has the information element
    {
@@ -150,14 +162,19 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       return null;
    }
    
+   //Written by Nicholas
    public T get(T element)
    {
       return getNode(element).getInfo();
    }
+   
+   //Written by Nicholas
    public boolean contains(T element)
    {
       return (getNode(element) != null);
    }
+   
+   //Written by Nicholas
    public T min()
    // If this BST is empty, returns null;
    // otherwise returns the smallest element of the tree.
@@ -170,7 +187,8 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          return node.getInfo();
       }
    }
-
+   
+   //Written by Nicholas
   public T max()
   // If this BST is empty, returns null;
   // otherwise returns the largest element of the tree.
@@ -184,6 +202,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       }
    }
    
+   //Written by Nicholas
    public boolean remove(T target)
    //If the node exists, removes it and places a similar node in the BST in its place
    {
@@ -274,10 +293,15 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             }
          }
       }
+      numElements--;
       return true;
    }
    
-   
+   //Written by Corey
+   public Iterator<T> iterator() {
+        return getIterator(Traversal.Inorder);
+    }
+   //Written by Corey 
    public Iterator<T> getIterator(Traversal orderType) {//TODO
         if (orderType == Traversal.Inorder) {
             return new Iterator<>() {

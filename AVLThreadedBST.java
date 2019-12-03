@@ -276,4 +276,38 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       }
       return true;
    }
+   
+   
+   public Iterator<T> getIterator(Traversal orderType) {//TODO
+        if (orderType == Traversal.Inorder) {
+            return new Iterator<>() {
+                private int numIterated = 0;
+                private HashSet<BSTNode<T>> visited = new HashSet<>();
+                private BSTNode<T> node = root;
+
+                public boolean hasNext() {
+                    return numIterated != numElements;
+                }
+
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException();
+                    }
+                    T out;
+                    if (node.getLeft() == null || visited.contains(node.getLeft())) {
+                        out = node.getInfo();
+                        node = node.getRight();
+                        numIterated++;
+                    } else {
+                        node = node.getLeft();
+                        visited.add(node);
+                        out = next();
+                    }
+                    return out;
+                }
+            };
+        }
+        return null;
+    }
+
 }

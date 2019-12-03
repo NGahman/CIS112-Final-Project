@@ -31,22 +31,27 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
   // of elements.
   {
     root = null;
+    numElements = 0;
     this.comp = comp;
   }
   
    public void Balance()
+   //Recursively goes through the tree and calls RotateLeft and RotateRight to turn the tree into a complete tree.
    {
       //TODO: MAKE THIS
    }
    
    protected void RotateLeft(BSTNode<T> node)
+   //Given a node, rotates the subtree such that the node's right link becomes the root, and links to the node.
    {
       BSTNode<T> prenode = getPredecessor(node);
       if (prenode.getLeft() == node) {prenode.setLeft(node.getLeft());}
       else {prenode.setRight(node.getLeft());}
       node.setLeft(null);
+      //No need to link the left link to the node, because threading already does that
    }
    protected void RotateRight(BSTNode<T> node)
+   //Given a node, rotates the subtree such that the node's left link becomes the root, and links to the node.
    {
       BSTNode<T> prenode = getPredecessor(node);
       if (prenode.getLeft() == node) {prenode.setLeft(node.getRight());}
@@ -56,6 +61,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    }
    
    protected BSTNode<T> getPredecessor(BSTNode<T> node)
+   //Gets the immediate predecessor of the node
    {
       if (isEmpty()) {return null;}
       BSTNode<T> search = root;
@@ -66,7 +72,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          else {search = search.getRight();}
       }
       while (search.getLeft() != null || search.getRight() != null);
-      //If this is triggered, something went horribly wrong
+      //This should not be triggered, this is only here to make the IDE happy
       return null;
       
    }
@@ -84,6 +90,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       LinkedStack<BSTNode<T>> stackRight = new LinkedStack<>();
       BSTNode<T> node = root;
       BSTNode<T> previousnode = root;
+      //Goes through the tree until a suitable place for the newNode is found
       while (node != null)
       {
          previousnode = node;
@@ -100,8 +107,10 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             leftNode = false;
          }
       }
+      //Adds the node to the tree
       if (leftNode) {previousnode.setLeft(node);}
       else {previousnode.setRight(node);}
+      //Adds the thread to the node
       if (!stackRight.isEmpty()) {node.setRight(stackRight.top());}
       numElements++;
       return true;
@@ -126,23 +135,28 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       return numElements;
    }
    
-   public T get(T element)
+   protected BSTNode<T> getNode(T element)
+   //Gets the node that has the information element
    {
       if (isEmpty()) {return null;}
       BSTNode<T> search = root;
       do
       {
-         if (search.getInfo() == element) {return search.getInfo();}
+         if (search.getInfo() == element) {return search;}
          if (comp.compare(element, search.getInfo()) <= 0) {search = search.getLeft();}
          else {search = search.getRight();}
       }
-      while (search.getLeft() != null || search.getRight() != null);
+      while (search != null && (search.getLeft() != null || search.getRight() != null));
       return null;
    }
    
+   public T get(T element)
+   {
+      return getNode(element).getInfo();
+   }
    public boolean contains(T element)
    {
-      return (get(element) != null);
+      return (getNode(element) != null);
    }
    public T min()
    // If this BST is empty, returns null;
@@ -169,19 +183,17 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          return node.getInfo();
       }
    }
+   
    public boolean remove(T target)
+   //If the node exists, removes it and places a similar node in the BST in its place
    {
       if (isEmpty()) {return false;}
-      BSTNode<T> removeNode = root;
+      if (!contains(target)) {return false;}
+      BSTNode<T> removeNode = getNode(target);
       BSTNode<T> preNode = getPredecessor(removeNode);
       BSTNode<T> editNode = removeNode;
       
-      while (removeNode.getInfo() != target)
-      {
-         if (comp.compare(target, removeNode.getInfo()) <= 0) {removeNode = removeNode.getLeft();}
-         else {removeNode = removeNode.getRight();}
-      }
-      
+      //If the target has only a right link, removing it is easy, because threading isn't involved
       if (removeNode.getLeft() == null)
       {
          if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
@@ -189,12 +201,16 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       }
       else
       {
+         //If the target has a left link, the threading needs to be removed before the node.
+         //This is found at the max node of the left subtree.
          editNode = removeNode.getLeft();
          while (editNode.getRight() != removeNode)
          {
             editNode = editNode.getRight();
          }
          editNode.setRight(null);
+         
+         //if removeNode has a left link, but not a right, we can remove it easily, similarly to when it didn't have a left link
          if (removeNode.getRight() == null)
          {
             if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
@@ -202,10 +218,19 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          }
          else
          {
+            //If removeNode has both a left and a right link, we'll need to find a node to replace it.
+            //The best canidates are the max node of the left subtree, and the min node of the right subtree.
+            //We already have the max node of the left subtree, but if we take from that too often we'll imbalance the subtree
+            //Thus, we'll search for both, and replace removeNode with whichever one is found first.
             BSTNode<T> removeLeftNode = removeNode.getLeft();
             BSTNode<T> removeRightNode = removeNode.getRight();
             BSTNode<T> preRemoveLeftNode = removeNode.getLeft();
             BSTNode<T> preRemoveRightNode = removeNode.getRight();
+            
+            /*
+            Iterates through both subtrees until either the max node of the left subtree
+            or the min node of the right subtree is found
+            */
             while (removeRightNode.getLeft() != null && removeLeftNode.getRight() != null)
             {
                preRemoveLeftNode = removeLeftNode;
@@ -213,9 +238,21 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                removeLeftNode = removeLeftNode.getRight();
                removeRightNode = removeRightNode.getLeft();
             }
+            //Once a max or min node is found, we have to determine which one was found.
             if (removeLeftNode.getRight() == null)
             {
-               preRemoveLeftNode.setRight(removeLeftNode.getLeft());
+               //If it's the max node that was found first, it replaces removeNode in the tree.
+               //However, we need to generate new threading.
+               //Since editNode is the replacement, we need to find the new max node in the subtree.
+               if (removeLeftNode.getLeft() != null)
+               {
+                  preRemoveLeftNode.setRight(removeLeftNode.getLeft());
+                  editNode = removeLeftNode.getLeft();
+                  while (editNode.getRight() != null) {editNode = editNode.getRight();}
+                  editNode.setRight(removeLeftNode);
+               }
+               
+               //This code is what replaces removeNode with the replacement.
                if (preNode.getRight() == removeNode) {preNode.setRight(removeLeftNode);}
                else {preNode.setLeft(removeLeftNode);}
                removeLeftNode.setLeft(removeNode.getLeft());
@@ -223,7 +260,13 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             }
             else
             {
+               //If it's the min node that was found first, it replaces removeNode in the tree.
+               //However, we need to generate new threading.
+               //Since editNode is not the replacement, we can simply change editNode's threading to the replacement node.
+               editNode.setRight(removeRightNode);
                preRemoveRightNode.setRight(removeRightNode.getRight());
+               
+               //This code is what replaces removeNode with replacement.
                if (preNode.getRight() == removeNode) {preNode.setRight(removeRightNode);}
                else {preNode.setLeft(removeRightNode);}
                removeRightNode.setLeft(removeNode.getLeft());

@@ -82,8 +82,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          if (comp.compare(node.getInfo(), search.getInfo()) <= 0) {search = search.getLeft();}
          else {search = search.getRight();}
       }
-      while (search.getLeft() != null || search.getRight() != null);
-      //This should not be triggered, this is only here to make the IDE happy
+      while (search != null && (search.getLeft() != null || search.getRight() != null));
       return null;
       
    }
@@ -98,6 +97,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       {
          BSTNode<T> node = new BSTNode<T>(element);
          root = node;
+         numElements++;
          return true;
       }
       LinkedStack<BSTNode<T>> stackRight = new LinkedStack<>();
@@ -120,6 +120,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             leftNode = false;
          }
       }
+      node = new BSTNode<T>(element);
       //Adds the node to the tree
       if (leftNode) {previousnode.setLeft(node);}
       else {previousnode.setRight(node);}
@@ -155,21 +156,24 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    //Gets the node that has the information element
    {
       if (isEmpty()) {return null;}
+      LinkedCollection<BSTNode<T>> link = new LinkedCollection();
       BSTNode<T> search = root;
       do
       {
+         link.add(search);
          if (search.getInfo() == element) {return search;}
          if (comp.compare(element, search.getInfo()) <= 0) {search = search.getLeft();}
          else {search = search.getRight();}
       }
-      while (search != null && (search.getLeft() != null || search.getRight() != null));
+      while (search != null && (search.getLeft() != null || search.getRight() != null) && (!link.contains(search)));
       return null;
    }
    
    //Written by Nicholas
    public T get(T element)
    {
-      return getNode(element).getInfo();
+      if (contains(element)) {return getNode(element).getInfo();}
+      return null;
    }
    
    //Written by Nicholas
@@ -201,7 +205,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       else
       {
          BSTNode<T> node = root;
-         while (node.getLeft() != null) {node = node.getRight();}
+         while (node.getRight() != null) {node = node.getRight();}
          return node.getInfo();
       }
    }
@@ -212,15 +216,25 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    {
       if (isEmpty()) {return false;}
       if (!contains(target)) {return false;}
+      if (numElements == 1)
+      {
+         root = null;
+         numElements--;
+         return true;
+      }
       BSTNode<T> removeNode = getNode(target);
       BSTNode<T> preNode = getPredecessor(removeNode);
       BSTNode<T> editNode = removeNode;
-      
       //If the target has only a right link, removing it is easy, because threading isn't involved
       if (removeNode.getLeft() == null)
-      {
-         if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
-         else {preNode.setLeft(removeNode.getRight());}
+      {  
+         if (removeNode != root)
+         {
+            if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
+            else if (removeNode.getRight() != preNode) {preNode.setLeft(removeNode.getRight());}
+            else {preNode.setLeft(null);}
+         }
+         else {root = removeNode.getRight();}
       }
       else
       {
@@ -236,8 +250,12 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          //if removeNode has a left link, but not a right, we can remove it easily, similarly to when it didn't have a left link
          if (removeNode.getRight() == null)
          {
-            if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
-            else {preNode.setLeft(removeNode.getRight());}
+            if (removeNode != root)
+            {
+               if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
+               else {preNode.setLeft(removeNode.getRight());}
+            }
+            else {root = removeNode.getLeft();}
          }
          else
          {
@@ -276,8 +294,11 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                }
                
                //This code is what replaces removeNode with the replacement.
-               if (preNode.getRight() == removeNode) {preNode.setRight(removeLeftNode);}
-               else {preNode.setLeft(removeLeftNode);}
+               if (preNode != null)
+               {
+                  if (preNode.getRight() == removeNode) {preNode.setRight(removeLeftNode);}
+                  else {preNode.setLeft(removeLeftNode);}
+               }
                removeLeftNode.setLeft(removeNode.getLeft());
                removeLeftNode.setRight(removeNode.getRight());
             }
@@ -290,8 +311,11 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                preRemoveRightNode.setRight(removeRightNode.getRight());
                
                //This code is what replaces removeNode with replacement.
-               if (preNode.getRight() == removeNode) {preNode.setRight(removeRightNode);}
-               else {preNode.setLeft(removeRightNode);}
+               if (preNode != null)
+               {
+                  if (preNode.getRight() == removeNode) {preNode.setRight(removeRightNode);}
+                  else {preNode.setLeft(removeRightNode);}
+               }
                removeRightNode.setLeft(removeNode.getLeft());
                removeRightNode.setRight(removeNode.getRight());
             }

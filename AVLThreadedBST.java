@@ -93,12 +93,14 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          numElements++;
          return true;
       }
+      LinkedCollection<BSTNode<T>> link = new LinkedCollection();
       LinkedStack<BSTNode<T>> stackRight = new LinkedStack<>();
       BSTNode<T> node = root;
       BSTNode<T> previousnode = root;
       //Goes through the tree until a suitable place for the newNode is found
       while (node != null)
       {
+         link.add(node);
          previousnode = node;
          if (comp.compare(element, node.getInfo()) <= 0)
          {
@@ -107,9 +109,14 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             stackRight.push(previousnode);
 
          }
-         else
+         else if (!link.contains(node.getRight()))
          {
             node = node.getRight();  
+            leftNode = false;
+         }
+         else
+         {
+            node = null;  
             leftNode = false;
          }
       }

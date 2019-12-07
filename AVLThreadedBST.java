@@ -92,6 +92,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          BSTNode<T> node = new BSTNode<T>(element);
          root = node;
          numElements++;
+         node.hasThread = false;
          return true;
       }
       LinkedStack<BSTNode<T>> stackRight = new LinkedStack<>();
@@ -110,7 +111,11 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          }
          else
          {
-            if (node.hasThread) {node = null;}
+            if (node.hasThread) 
+            {
+               node = null;
+               leftNode = false;
+            }
             else 
             {
                node = node.getRight();
@@ -121,8 +126,11 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       node = new BSTNode<T>(element);
       //Adds the node to the tree
       if (leftNode) {previousnode.setLeft(node);}
-      else {previousnode.setRight(node);}
-      previousnode.hasThread = false;
+      else 
+      {
+         previousnode.setRight(node);
+         previousnode.hasThread = false;
+      }
       node.hasThread = false;
       //Adds the thread to the node
       if (!stackRight.isEmpty()) 
@@ -309,7 +317,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                }
                removeLeftNode.setLeft(removeNode.getLeft());
                removeLeftNode.setRight(removeNode.getRight());
-               removeLeftNode.hasThread = false;
+               removeLeftNode.hasThread = removeNode.hasThread;
             }
             else
             {
@@ -328,7 +336,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                }
                removeRightNode.setLeft(removeNode.getLeft());
                removeRightNode.setRight(removeNode.getRight());
-               removeRightNode.hasThread = false;
+               removeRightNode.hasThread = removeNode.hasThread;
             }
          }
       }

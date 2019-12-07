@@ -26,6 +26,7 @@ public class AVLTest
       }
       
       System.out.println();
+      System.out.println(avl.get(4));
       System.out.println(avl.remove(4));
       System.out.println(avl.get(4));
       System.out.println(avl.get(3));

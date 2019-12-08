@@ -1,6 +1,4 @@
-package FinalProject;
-
-import bookFiles.support.BSTNode;
+import support.BSTNode;
 
 public class ThreadedBSTNode<T> extends BSTNode<T> {
     public boolean hasThread;

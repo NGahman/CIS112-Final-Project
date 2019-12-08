@@ -9,7 +9,7 @@ import ch02.stacks.LinkedStack;
 
 public class AVLThreadedBST<T> implements BSTInterface<T>
 {
-   protected BSTNode<T> root;      // reference to the root of this BST
+   protected ThreadedBSTNode<T> root;      // reference to the root of this BST
    protected Comparator<T> comp;   // used for all comparisons
    protected boolean found;   // used by remove
    protected int numElements;
@@ -44,10 +44,10 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       //TODO: MAKE THIS
    }
    
-   protected void RotateLeft(BSTNode<T> node)
+   protected void RotateLeft(ThreadedBSTNode<T> node)
    //Given a node, rotates the subtree such that the node's right link becomes the root, and links to the node.
    {
-      BSTNode<T> prenode = getPredecessor(node);
+      ThreadedBSTNode<T> prenode = getPredecessor(node);
       if (prenode.getLeft() == node) {prenode.setLeft(node.getLeft());}
       else {prenode.setRight(node.getLeft());}
       node.setLeft(null);
@@ -56,21 +56,21 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       //No need to link the left link to the node, because threading already does that
    }
    
-   protected void RotateRight(BSTNode<T> node)
+   protected void RotateRight(ThreadedBSTNode<T> node)
    //Given a node, rotates the subtree such that the node's left link becomes the root, and links to the node.
    {
-      BSTNode<T> prenode = getPredecessor(node);
+      ThreadedBSTNode<T> prenode = getPredecessor(node);
       if (prenode.getLeft() == node) {prenode.setLeft(node.getRight());}
       else {prenode.setRight(node.getRight());}
       node.getRight().setLeft(node);
       node.setRight(null);
    }
    
-   protected BSTNode<T> getPredecessor(BSTNode<T> node)
+   protected ThreadedBSTNode<T> getPredecessor(ThreadedBSTNode<T> node)
    //Gets the immediate predecessor of the node
    {
       if (isEmpty()) {return null;}
-      BSTNode<T> search = root;
+      ThreadedBSTNode<T> search = root;
       do
       {
          if (search.getLeft() == node || search.getRight() == node) {return search;}
@@ -89,15 +89,15 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       if (isFull()) {return false;}
       if (root == null)
       {
-         BSTNode<T> node = new BSTNode<T>(element);
+         ThreadedBSTNode<T> node = new ThreadedBSTNode<T>(element);
          root = node;
          numElements++;
          node.hasThread = false;
          return true;
       }
-      LinkedStack<BSTNode<T>> stackRight = new LinkedStack<>();
-      BSTNode<T> node = root;
-      BSTNode<T> previousnode = root;
+      LinkedStack<ThreadedBSTNode<T>> stackRight = new LinkedStack<>();
+      ThreadedBSTNode<T> node = root;
+      ThreadedBSTNode<T> previousnode = root;
       //Goes through the tree until a suitable place for the newNode is found
       while (node != null)
       {
@@ -123,7 +123,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             }
          }
       }
-      node = new BSTNode<T>(element);
+      node = new ThreadedBSTNode<T>(element);
       //Adds the node to the tree
       if (leftNode) {previousnode.setLeft(node);}
       else 
@@ -160,11 +160,11 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       return numElements;
    }
    
-   protected BSTNode<T> getNode(T element)
+   protected ThreadedBSTNode<T> getNode(T element)
    //Gets the node that has the information element
    {
       if (isEmpty()) {return null;}
-      BSTNode<T> search = root;
+      ThreadedBSTNode<T> search = root;
       do
       {
          if (search.getInfo() == element) {return search;}
@@ -194,7 +194,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       if (isEmpty()) {return null;}
       else
       {
-         BSTNode<T> node = root;
+         ThreadedBSTNode<T> node = root;
          while (node.getLeft() != null) {node = node.getLeft();}
          return node.getInfo();
       }
@@ -207,7 +207,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       if (isEmpty()) {return null;}
       else
       {
-         BSTNode<T> node = root;
+         ThreadedBSTNode<T> node = root;
          while (node.getRight() != null) {node = node.getRight();}
          return node.getInfo();
       }
@@ -224,9 +224,9 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          numElements--;
          return true;
       }
-      BSTNode<T> removeNode = getNode(target);
-      BSTNode<T> preNode = getPredecessor(removeNode);
-      BSTNode<T> editNode = removeNode;
+      ThreadedBSTNode<T> removeNode = getNode(target);
+      ThreadedBSTNode<T> preNode = getPredecessor(removeNode);
+      ThreadedBSTNode<T> editNode = removeNode;
       //If the target has only a right link, removing it is easy, because threading isn't involved
       if (removeNode.getLeft() == null)
       {  
@@ -278,10 +278,10 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             //The best canidates are the max node of the left subtree, and the min node of the right subtree.
             //We already have the max node of the left subtree, but if we take from that too often we'll imbalance the subtree
             //Thus, we'll search for both, and replace removeNode with whichever one is found first.
-            BSTNode<T> removeLeftNode = removeNode.getLeft();
-            BSTNode<T> removeRightNode = removeNode.getRight();
-            BSTNode<T> preRemoveLeftNode = removeNode.getLeft();
-            BSTNode<T> preRemoveRightNode = removeNode.getRight();
+            ThreadedBSTNode<T> removeLeftNode = removeNode.getLeft();
+            ThreadedBSTNode<T> removeRightNode = removeNode.getRight();
+            ThreadedBSTNode<T> preRemoveLeftNode = removeNode.getLeft();
+            ThreadedBSTNode<T> preRemoveRightNode = removeNode.getRight();
             
             /*
             Iterates through both subtrees until either the max node of the left subtree
@@ -352,8 +352,8 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         if (orderType == Traversal.Inorder) {
             return new Iterator<>() {
                 private int numIterated = 0;
-                private HashSet<BSTNode<T>> visited = new HashSet<>();
-                private BSTNode<T> node = root;
+                private HashSet<ThreadedBSTNode<T>> visited = new HashSet<>();
+                private ThreadedBSTNode<T> node = root;
 
                 public boolean hasNext() {
                     return numIterated != numElements;

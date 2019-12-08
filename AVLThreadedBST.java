@@ -1,9 +1,6 @@
 package FinalProject;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import bookFiles.ch07.trees.BSTInterface;
 import bookFiles.support.BSTNode;
@@ -16,7 +13,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
     public AVLThreadedBST() {
         comp = new Comparator() {
             public int compare(Object o1, Object o2) {
-                return ((Comparable) o1).compareTo(o2);
+                return ((Comparable)o1).compareTo(o2);
             }
         };
     }
@@ -47,7 +44,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         return node.getInfo();
     }
 
-    public Iterator<T> getIterator(Traversal orderType) {//TODO
+    public Iterator<T> getIterator(Traversal orderType) {
         if (orderType == Traversal.Inorder) {
             return new Iterator<>() {
                 private int numIterated = 0;
@@ -75,8 +72,54 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
                     return out;
                 }
             };
+        } if (orderType == Traversal.Preorder) {
+            LinkedList<T> q = new LinkedList<>();
+            preOrder(root, q);
+            return new Iterator<>() {
+                public boolean hasNext() {
+                    return !q.isEmpty();
+                }
+
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException();
+                    }
+                    return q.removeFirst();
+                }
+            };
+        } if (orderType == Traversal.Postorder) {
+            LinkedList<T> q = new LinkedList<>();
+            postOrder(root, q);
+            return new Iterator<>() {
+                public boolean hasNext() {
+                    return !q.isEmpty();
+                }
+
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException();
+                    }
+                    return q.removeFirst();
+                }
+            };
         }
-        return null;
+        throw new UnsupportedOperationException(); // this should never trigger (hopefully)
+    }
+
+    private void preOrder(BSTNode<T> node, LinkedList<T> q) {
+        if (node != null) {
+            q.add(node.getInfo());
+            preOrder(node.getLeft(), q);
+            preOrder(node.getRight(), q);
+        }
+    }
+
+    private void postOrder(BSTNode<T> node, LinkedList<T> q) {
+        if (node != null) {
+            postOrder(node.getLeft(), q);
+            postOrder(node.getRight(), q);
+            q.add(node.getInfo());
+        }
     }
 
     public boolean add(T element) {//TODO

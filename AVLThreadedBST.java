@@ -3,10 +3,9 @@ package FinalProject;
 import java.util.*;
 
 import bookFiles.ch07.trees.BSTInterface;
-import bookFiles.support.BSTNode;
 
 public class AVLThreadedBST<T> implements BSTInterface<T> {
-    private BSTNode<T> root = null;
+    private ThreadedBSTNode<T> root = null;
     private Comparator comp;
     private int numElements;
 
@@ -26,7 +25,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         if (isEmpty()) {
             return null;
         }
-        BSTNode<T> node = root;
+        ThreadedBSTNode<T> node = root;
         while (node.getLeft() != null) {
             node = node.getLeft();
         }
@@ -37,7 +36,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         if (isEmpty()) {
             return null;
         }
-        BSTNode<T> node = root;
+        ThreadedBSTNode<T> node = root;
         while (node.getRight() != null) {
             node = node.getRight();
         }
@@ -48,8 +47,8 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         if (orderType == Traversal.Inorder) {
             return new Iterator<>() {
                 private int numIterated = 0;
-                private HashSet<BSTNode<T>> visited = new HashSet<>();
-                private BSTNode<T> node = root;
+                private ThreadedBSTNode<T> node = root;
+                private boolean nodeIsThread = false;
 
                 public boolean hasNext() {
                     return numIterated != numElements;
@@ -60,13 +59,13 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
                         throw new NoSuchElementException();
                     }
                     T out;
-                    if (node.getLeft() == null || visited.contains(node.getLeft())) {
+                    if (node.getLeft() == null || nodeIsThread) {
                         out = node.getInfo();
+                        nodeIsThread = node.hasThread;
                         node = node.getRight();
                         numIterated++;
                     } else {
                         node = node.getLeft();
-                        visited.add(node);
                         out = next();
                     }
                     return out;
@@ -106,7 +105,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         throw new UnsupportedOperationException(); // this should never trigger (hopefully)
     }
 
-    private void preOrder(BSTNode<T> node, LinkedList<T> q) {
+    private void preOrder(ThreadedBSTNode<T> node, LinkedList<T> q) {
         if (node != null) {
             q.add(node.getInfo());
             preOrder(node.getLeft(), q);
@@ -114,7 +113,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         }
     }
 
-    private void postOrder(BSTNode<T> node, LinkedList<T> q) {
+    private void postOrder(ThreadedBSTNode<T> node, LinkedList<T> q) {
         if (node != null) {
             postOrder(node.getLeft(), q);
             postOrder(node.getRight(), q);
@@ -125,7 +124,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
     public boolean add(T element) {//TODO
         numElements++;
         if (root == null) {
-            root = new BSTNode<>(element);
+            root = new ThreadedBSTNode<>(element);
             root.setRight(root);
         }
         return true;

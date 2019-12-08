@@ -19,4 +19,12 @@ public class ThreadedBSTNode<T> extends BSTNode<T> {
     public void setRight(ThreadedBSTNode<T> link) {
         right = link;
     }
+
+    public ThreadedBSTNode<T> getLeft() {
+        return left;
+    }
+
+    public ThreadedBSTNode<T> getRight() {
+        return right;
+    }
 }

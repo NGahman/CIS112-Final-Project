@@ -317,6 +317,8 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       return true;
    }
    
+   //iterator
+   
    public Iterator<T> iterator() {
         return getIterator(Traversal.Inorder);
     }

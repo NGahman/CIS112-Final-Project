@@ -1,7 +1,4 @@
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import ch07.trees.BSTInterface;
 import ch05.collections.LinkedCollection;

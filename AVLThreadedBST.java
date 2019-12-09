@@ -159,7 +159,65 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         return getIterator(Traversal.Inorder);
     }
 
-    private void reBalance() {//TODO
-        ;
+    //reBalance
+
+    private boolean isBalanced = true;
+
+    private void reBalance() {
+        isBalanced = false;
+        recReBalance(root);
+    }
+
+    private void recReBalance(ThreadedBSTNode<T> node) {//TODO: make less inefficient
+        if (isBalanced) {
+            return; // imbalance has already been found in a different subtree
+        }
+        int balance = balanceFactor(node);
+        if (balance < -1) { // too left heavy
+            int leftBalance = balanceFactor(node.getLeft());
+            if (leftBalance <= 0) {
+                // rotate right
+            } else {
+                // rotate left-right
+            }
+            isBalanced = true;
+        } else if (balance > 1) { // too right heavy
+            int rightBalance = balanceFactor(node.getRight());
+            if (rightBalance <= 0) {
+                // rotate left
+            } else {
+                // rotate right-left
+            }
+            isBalanced = true;
+        } else {
+            // check if subtrees are balanced
+            if (node.getLeft() != null) recReBalance(node.getLeft());
+            if (node.getRight() != null) recReBalance(node.getRight());
+        }
+    }
+
+    private int balanceFactor(ThreadedBSTNode<T> node) {
+        return height(node.getRight()) - height(node.getLeft());
+    }
+
+    private int height(ThreadedBSTNode<T> node) {
+        ThreadedBSTNode<T> left = node.getLeft();
+        ThreadedBSTNode<T> right = node.getRight();
+        if (left == null && right == null) {
+            return 1;
+        }
+        if (left == null) {
+            return height(right)+1;
+        }
+        if (right == null) {
+            return height(left)+1;
+        }
+        int lh = height(left);
+        int rh = height(right);
+        if (lh > rh) {
+            return lh+1;
+        } else {
+            return rh+1;
+        }
     }
 }

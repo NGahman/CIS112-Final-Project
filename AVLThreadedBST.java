@@ -386,14 +386,14 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         if (node != null) {
             q.add(node.getInfo());
             preOrder(node.getLeft(), q);
-            preOrder(node.getRight(), q);
+            if (!node.hasThread) {preOrder(node.getRight(), q);}
         }
     }
 
     private void postOrder(ThreadedBSTNode<T> node, LinkedList<T> q) {
         if (node != null) {
             postOrder(node.getLeft(), q);
-            postOrder(node.getRight(), q);
+            if (!node.hasThread) {postOrder(node.getRight(), q);}
             q.add(node.getInfo());
         }
     }
@@ -403,7 +403,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
 
     private boolean isBalanced = true;
 
-    private void reBalance() {
+    public void reBalance() {
         if (isEmpty()) {
             return;
         }
@@ -435,7 +435,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         } else {
             // check if subtrees are balanced
             if (node.getLeft() != null) recReBalance(node.getLeft());
-            if (node.getRight() != null) recReBalance(node.getRight());
+            if (node.getRight() != null  && !node.hasThread) recReBalance(node.getRight());
         }
     }
 
@@ -459,7 +459,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         node.setLeft(leftChild.getLeft());
     }
 
-    private int balanceFactor(ThreadedBSTNode<T> node) {
+    public int balanceFactor(ThreadedBSTNode<T> node) {
         return height(node.getRight()) - height(node.getLeft());
     }
 
@@ -471,7 +471,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         int branchDepth = 1;
         while (!stack.empty()) {
             node = stack.pop();
-            if (node.getLeft() == null && node.getRight() == null) {
+            if (node == null || (node.getLeft() == null && node.getRight() == null)) {
                 if (depth > maxDepth) {
                     maxDepth = depth;
                 }

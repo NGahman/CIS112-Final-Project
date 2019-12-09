@@ -1,3 +1,6 @@
+import java.util.*;
+import ch07.trees.BSTInterface.Traversal;
+
 public class AVLTest
 {
    public static void main(String[] args)
@@ -20,9 +23,28 @@ public class AVLTest
       System.out.println(avl.max());
       System.out.println(avl.size());
       System.out.println();
+      avl.reBalance();
+      Iterator<Integer> i = avl.getIterator(Traversal.Inorder);
       
-      for (Integer s : avl) {
-         System.out.println(s);
+      while (i.hasNext())
+      {
+         System.out.println(i.next());
+      }
+      
+      System.out.println();
+      i = avl.getIterator(Traversal.Postorder);
+      
+      while (i.hasNext())
+      {
+         System.out.println(i.next());
+      }
+      
+      System.out.println();
+      i = avl.getIterator(Traversal.Preorder);
+      
+      while (i.hasNext())
+      {
+         System.out.println(i.next());
       }
       
       System.out.println();

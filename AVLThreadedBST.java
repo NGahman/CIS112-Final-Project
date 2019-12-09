@@ -348,12 +348,12 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         return getIterator(Traversal.Inorder);
     }
     
-   public Iterator<T> getIterator(Traversal orderType) {//TODO
+   public Iterator<T> getIterator(Traversal orderType) {
         if (orderType == Traversal.Inorder) {
             return new Iterator<>() {
                 private int numIterated = 0;
-                private HashSet<ThreadedBSTNode<T>> visited = new HashSet<>();
                 private ThreadedBSTNode<T> node = root;
+                private boolean nodeIsThread = false;
 
                 public boolean hasNext() {
                     return numIterated != numElements;
@@ -364,20 +364,67 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                         throw new NoSuchElementException();
                     }
                     T out;
-                    if (node.getLeft() == null || visited.contains(node.getLeft())) {
+                    if (node.getLeft() == null || nodeIsThread) {
                         out = node.getInfo();
+                        nodeIsThread = node.hasThread;
                         node = node.getRight();
                         numIterated++;
                     } else {
                         node = node.getLeft();
-                        visited.add(node);
                         out = next();
                     }
                     return out;
                 }
             };
+        } if (orderType == Traversal.Preorder) {
+            LinkedList<T> q = new LinkedList<>();
+            preOrder(root, q);
+            return new Iterator<>() {
+                public boolean hasNext() {
+                    return !q.isEmpty();
+                }
+
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException();
+                    }
+                    return q.removeFirst();
+                }
+            };
+        } if (orderType == Traversal.Postorder) {
+            LinkedList<T> q = new LinkedList<>();
+            postOrder(root, q);
+            return new Iterator<>() {
+                public boolean hasNext() {
+                    return !q.isEmpty();
+                }
+
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException();
+                    }
+                    return q.removeFirst();
+                }
+            };
         }
-        return null;
+        throw new UnsupportedOperationException(); // this should never trigger (hopefully)
     }
+
+    private void preOrder(ThreadedBSTNode<T> node, LinkedList<T> q) {
+        if (node != null) {
+            q.add(node.getInfo());
+            preOrder(node.getLeft(), q);
+            preOrder(node.getRight(), q);
+        }
+    }
+
+    private void postOrder(ThreadedBSTNode<T> node, LinkedList<T> q) {
+        if (node != null) {
+            postOrder(node.getLeft(), q);
+            postOrder(node.getRight(), q);
+            q.add(node.getInfo());
+        }
+    }
+
 
 }

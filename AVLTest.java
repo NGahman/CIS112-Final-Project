@@ -9,6 +9,14 @@ public class AVLTest
       System.out.println(avl.add(1));
       System.out.println(avl.add(2));
       System.out.println(avl.add(3));
+      
+      Iterator<Integer> i = avl.getIterator(Traversal.Preorder);
+      
+      while (i.hasNext())
+      {
+         System.out.println(i.next());
+      }
+      
       System.out.println(avl.add(4));
       System.out.println(avl.add(5));
       System.out.println(avl.add(6));
@@ -24,7 +32,7 @@ public class AVLTest
       System.out.println(avl.size());
       System.out.println();
       avl.reBalance();
-      Iterator<Integer> i = avl.getIterator(Traversal.Inorder);
+      i = avl.getIterator(Traversal.Inorder);
       
       while (i.hasNext())
       {

@@ -109,6 +109,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          node.hasThread = true;
       }
       numElements++;
+      reBalance();
       return true;
    }
    
@@ -311,6 +312,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          }
       }
       numElements--;
+      reBalance();
       return true;
    }
    
@@ -403,7 +405,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
 
     private boolean isBalanced = true;
 
-    public void reBalance() {
+    protected void reBalance() {
         if (isEmpty()) {
             return;
         }
@@ -417,7 +419,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         }
         int balance = balanceFactor(node);
         if (balance < -1) { // too left heavy
-            if (balanceFactor(node.getLeft()) <= 0) {
+            if (balanceFactor(node.getLeft()) > 0) {
                 rotateRight(node);
             } else {
                 rotateLeft(node.getLeft());
@@ -425,7 +427,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             }
             isBalanced = true;
         } else if (balance > 1) { // too right heavy
-            if (balanceFactor(node.getRight()) <= 0) {
+            if (balanceFactor(node.getRight()) > 0) {
                 rotateLeft(node);
             } else {
                 rotateRight(node.getRight());

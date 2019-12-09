@@ -177,33 +177,19 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
         }
         int balance = balanceFactor(node);
         if (balance < -1) { // too left heavy
-            ThreadedBSTNode<T> leftChild = node.getLeft();
-            int leftBalance = balanceFactor(leftChild);
-            if (leftBalance <= 0) {
-                // rotate right
-                ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
-                nodeCopy.setRight(node.getRight());
-                nodeCopy.setLeft(leftChild.getRight());
-                node.setRight(nodeCopy);
-                node.setInfo(leftChild.getInfo());
-                node.setLeft(leftChild.getLeft());
+            if (balanceFactor(node.getLeft()) <= 0) {
+                rotateRight(node);
             } else {
-                // rotate left-right
+                rotateLeft(node.getLeft());
+                rotateRight(node);
             }
             isBalanced = true;
         } else if (balance > 1) { // too right heavy
-            ThreadedBSTNode<T> rightChild = node.getRight();
-            int rightBalance = balanceFactor(rightChild);
-            if (rightBalance <= 0) {
-                // rotate left
-                ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
-                nodeCopy.setLeft(node.getLeft());
-                nodeCopy.setRight(rightChild.getLeft());
-                node.setLeft(nodeCopy);
-                node.setInfo(rightChild.getInfo());
-                node.setRight(rightChild.getRight());
+            if (balanceFactor(node.getRight()) <= 0) {
+                rotateLeft(node);
             } else {
-                // rotate right-left
+                rotateRight(node.getRight());
+                rotateLeft(node);
             }
             isBalanced = true;
         } else {
@@ -211,6 +197,26 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
             if (node.getLeft() != null) recReBalance(node.getLeft());
             if (node.getRight() != null) recReBalance(node.getRight());
         }
+    }
+
+    private void rotateLeft(ThreadedBSTNode<T> node) {
+        ThreadedBSTNode<T> rightChild = node.getRight();
+        ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
+        nodeCopy.setLeft(node.getLeft());
+        nodeCopy.setRight(rightChild.getLeft());
+        node.setLeft(nodeCopy);
+        node.setInfo(rightChild.getInfo());
+        node.setRight(rightChild.getRight());
+    }
+
+    private void rotateRight(ThreadedBSTNode<T> node) {
+        ThreadedBSTNode<T> leftChild = node.getLeft();
+        ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
+        nodeCopy.setRight(node.getRight());
+        nodeCopy.setLeft(leftChild.getRight());
+        node.setRight(nodeCopy);
+        node.setInfo(leftChild.getInfo());
+        node.setLeft(leftChild.getLeft());
     }
 
     private int balanceFactor(ThreadedBSTNode<T> node) {

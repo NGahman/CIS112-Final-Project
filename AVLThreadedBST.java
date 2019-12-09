@@ -338,6 +338,11 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                         throw new NoSuchElementException();
                     }
                     T out;
+                    System.out.println(node.getInfo());
+                    System.out.println(node.getLeft());
+                    if (node.getLeft() != null) {System.out.println(node.getLeft().getInfo());}
+                    System.out.println(node.getRight());
+                    if (node.getRight() != null) {System.out.println(node.getRight().getInfo());}
                     if (node.getLeft() == null || nodeIsThread) {
                         out = node.getInfo();
                         nodeIsThread = node.hasThread;
@@ -414,11 +419,12 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
     }
 
     private void recReBalance(ThreadedBSTNode<T> node) {//TODO: make less inefficient
-        if (isBalanced) {
-            return; // imbalance has already been found in a different subtree
-        }
+        //if (isBalanced) {
+            //return; // imbalance has already been found in a different subtree
+        //}
         int balance = balanceFactor(node);
-        if (balance < -1) { // too left heavy
+        System.out.println(balance);
+        if (balance <= -1) { // too left heavy
             if (balanceFactor(node.getLeft()) > 0) {
                 rotateRight(node);
             } else {
@@ -426,7 +432,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                 rotateRight(node);
             }
             isBalanced = true;
-        } else if (balance > 1) { // too right heavy
+        } else if (balance >= 1) { // too right heavy
             if (balanceFactor(node.getRight()) > 0) {
                 rotateLeft(node);
             } else {
@@ -434,31 +440,41 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                 rotateLeft(node);
             }
             isBalanced = true;
-        } else {
-            // check if subtrees are balanced
-            if (node.getLeft() != null) recReBalance(node.getLeft());
-            if (node.getRight() != null  && !node.hasThread) recReBalance(node.getRight());
         }
+        // check if subtrees are balanced
+        //System.out.println("oof");
+        if (node.getLeft() != null) {recReBalance(node.getLeft());}
+        if (node.getRight() != null  && !node.hasThread) {recReBalance(node.getRight());}
+        
     }
 
     private void rotateLeft(ThreadedBSTNode<T> node) {
+        //System.out.println("oof");
         ThreadedBSTNode<T> rightChild = node.getRight();
         ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
         nodeCopy.setLeft(node.getLeft());
-        nodeCopy.setRight(rightChild.getLeft());
+        //System.out.println(rightChild.getLeft());
         node.setLeft(nodeCopy);
-        node.setInfo(rightChild.getInfo());
-        node.setRight(rightChild.getRight());
+        if (rightChild != null) {
+            nodeCopy.setRight(rightChild.getLeft());
+            node.setInfo(rightChild.getInfo());
+            node.setRight(rightChild.getRight());
+        }
     }
 
     private void rotateRight(ThreadedBSTNode<T> node) {
+        //System.out.println("oof");
         ThreadedBSTNode<T> leftChild = node.getLeft();
         ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
+        System.out.println(node.getLeft());
         nodeCopy.setRight(node.getRight());
-        nodeCopy.setLeft(leftChild.getRight());
         node.setRight(nodeCopy);
-        node.setInfo(leftChild.getInfo());
-        node.setLeft(leftChild.getLeft());
+        if (leftChild != null) {
+            nodeCopy.setLeft(leftChild.getRight());
+            node.setInfo(leftChild.getInfo());
+            node.setLeft(leftChild.getLeft());
+        }
+        
     }
 
     public int balanceFactor(ThreadedBSTNode<T> node) {

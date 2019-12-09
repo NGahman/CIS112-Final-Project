@@ -218,23 +218,33 @@ public class AVLThreadedBST<T> implements BSTInterface<T> {
     }
 
     private int height(ThreadedBSTNode<T> node) {
-        ThreadedBSTNode<T> left = node.getLeft();
-        ThreadedBSTNode<T> right = node.getRight();
-        if (left == null && right == null) {
-            return 1;
+        int maxDepth = 0;
+        Stack<ThreadedBSTNode<T>> stack = new Stack<>();
+        stack.push(node);
+        int depth = 1;
+        int branchDepth = 1;
+        while (!stack.empty()) {
+            node = stack.pop();
+            if (node.getLeft() == null && node.getRight() == null) {
+                if (depth > maxDepth) {
+                    maxDepth = depth;
+                }
+                depth -= branchDepth;
+                branchDepth = 1;
+            } else {
+                if (node.getLeft() == null || node.getRight() == null) {
+                    branchDepth++;
+                }
+                if (node.getRight() != null){
+                    stack.push(node.getRight());
+                    depth++;
+                }
+                if (node.getLeft() != null) {
+                    stack.push(node.getLeft());
+                    depth++;
+                }
+            }
         }
-        if (left == null) {
-            return height(right)+1;
-        }
-        if (right == null) {
-            return height(left)+1;
-        }
-        int lh = height(left);
-        int rh = height(right);
-        if (lh > rh) {
-            return lh+1;
-        } else {
-            return rh+1;
-        }
+        return maxDepth;
     }
 }

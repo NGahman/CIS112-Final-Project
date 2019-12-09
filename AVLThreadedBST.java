@@ -30,7 +30,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
       };
    }
    
-   public AVLThreadedBST(Comparator<T> comp) 
+  public AVLThreadedBST(Comparator<T> comp) 
   // Creates an empty BST object - uses Comparator comp for order
   // of elements.
   {
@@ -38,34 +38,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
     numElements = 0;
     this.comp = comp;
   }
-   public void Balance()
-   //Recursively goes through the tree and calls RotateLeft and RotateRight to turn the tree into a complete tree.
-   {
-      //TODO: MAKE THIS
-   }
-   
-   protected void RotateLeft(ThreadedBSTNode<T> node)
-   //Given a node, rotates the subtree such that the node's right link becomes the root, and links to the node.
-   {
-      ThreadedBSTNode<T> prenode = getPredecessor(node);
-      if (prenode.getLeft() == node) {prenode.setLeft(node.getLeft());}
-      else {prenode.setRight(node.getLeft());}
-      node.setLeft(null);
-      node.hasThread = true;
-      node.getRight().hasThread = false;
-      //No need to link the left link to the node, because threading already does that
-   }
-   
-   protected void RotateRight(ThreadedBSTNode<T> node)
-   //Given a node, rotates the subtree such that the node's left link becomes the root, and links to the node.
-   {
-      ThreadedBSTNode<T> prenode = getPredecessor(node);
-      if (prenode.getLeft() == node) {prenode.setLeft(node.getRight());}
-      else {prenode.setRight(node.getRight());}
-      node.getRight().setLeft(node);
-      node.setRight(null);
-   }
-   
+ 
    protected ThreadedBSTNode<T> getPredecessor(ThreadedBSTNode<T> node)
    //Gets the immediate predecessor of the node
    {
@@ -426,5 +399,100 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         }
     }
 
+   
+    //reBalance
+
+    private boolean isBalanced = true;
+
+    private void reBalance() {
+        if (isEmpty()) {
+            return;
+        }
+        isBalanced = false;
+        recReBalance(root);
+    }
+
+    private void recReBalance(ThreadedBSTNode<T> node) {//TODO: make less inefficient
+        if (isBalanced) {
+            return; // imbalance has already been found in a different subtree
+        }
+        int balance = balanceFactor(node);
+        if (balance < -1) { // too left heavy
+            if (balanceFactor(node.getLeft()) <= 0) {
+                rotateRight(node);
+            } else {
+                rotateLeft(node.getLeft());
+                rotateRight(node);
+            }
+            isBalanced = true;
+        } else if (balance > 1) { // too right heavy
+            if (balanceFactor(node.getRight()) <= 0) {
+                rotateLeft(node);
+            } else {
+                rotateRight(node.getRight());
+                rotateLeft(node);
+            }
+            isBalanced = true;
+        } else {
+            // check if subtrees are balanced
+            if (node.getLeft() != null) recReBalance(node.getLeft());
+            if (node.getRight() != null) recReBalance(node.getRight());
+        }
+    }
+
+    private void rotateLeft(ThreadedBSTNode<T> node) {
+        ThreadedBSTNode<T> rightChild = node.getRight();
+        ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
+        nodeCopy.setLeft(node.getLeft());
+        nodeCopy.setRight(rightChild.getLeft());
+        node.setLeft(nodeCopy);
+        node.setInfo(rightChild.getInfo());
+        node.setRight(rightChild.getRight());
+    }
+
+    private void rotateRight(ThreadedBSTNode<T> node) {
+        ThreadedBSTNode<T> leftChild = node.getLeft();
+        ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
+        nodeCopy.setRight(node.getRight());
+        nodeCopy.setLeft(leftChild.getRight());
+        node.setRight(nodeCopy);
+        node.setInfo(leftChild.getInfo());
+        node.setLeft(leftChild.getLeft());
+    }
+
+    private int balanceFactor(ThreadedBSTNode<T> node) {
+        return height(node.getRight()) - height(node.getLeft());
+    }
+
+    private int height(ThreadedBSTNode<T> node) {
+        int maxDepth = 0;
+        Stack<ThreadedBSTNode<T>> stack = new Stack<>();
+        stack.push(node);
+        int depth = 1;
+        int branchDepth = 1;
+        while (!stack.empty()) {
+            node = stack.pop();
+            if (node.getLeft() == null && node.getRight() == null) {
+                if (depth > maxDepth) {
+                    maxDepth = depth;
+                }
+                depth -= branchDepth;
+                branchDepth = 1;
+            } else {
+                if (node.getLeft() == null || node.getRight() == null) {
+                    branchDepth++;
+                }
+                if (node.getRight() != null){
+                    stack.push(node.getRight());
+                    depth++;
+                }
+                if (node.getLeft() != null) {
+                    stack.push(node.getLeft());
+                    depth++;
+                }
+            }
+        }
+        return maxDepth;
+    }
 
 }

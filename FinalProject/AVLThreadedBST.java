@@ -290,6 +290,10 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                   editNode.setRight(removeLeftNode);
                   editNode.hasThread = true;
                }
+               else
+               {
+                  preRemoveLeftNode.hasThread = true;
+               }
 
                //This code is what replaces removeNode with the replacement.
                if (preNode != null)
@@ -297,9 +301,11 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                   if (preNode.getRight() == removeNode) {preNode.setRight(removeLeftNode);}
                   else {preNode.setLeft(removeLeftNode);}
                }
-               removeLeftNode.setLeft(removeNode.getLeft());
+               if (removeNode.getLeft() != removeLeftNode) {removeLeftNode.setLeft(removeNode.getLeft());}
+               else {removeLeftNode.setLeft(null);}
                removeLeftNode.setRight(removeNode.getRight());
                removeLeftNode.hasThread = removeNode.hasThread;
+               
                if (removeNode == root) {root = removeLeftNode;}
             }
             else
@@ -318,14 +324,15 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                   else {preNode.setLeft(removeRightNode);}
                }
                removeRightNode.setLeft(removeNode.getLeft());
-               removeRightNode.setRight(removeNode.getRight());
+               if (removeNode.getRight() != removeRightNode) {removeRightNode.setRight(removeNode.getRight());}
+               else {removeRightNode.setRight(null);}
                removeRightNode.hasThread = removeNode.hasThread;
                if (removeNode == root) {root = removeRightNode;}
             }
          }
       }
       numElements--;
-      //reBalance();
+      reBalance();
       return true;
    }
 

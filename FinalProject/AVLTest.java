@@ -26,7 +26,8 @@ public class AVLTest {
         }
         System.out.println(avl.balanceFactor(avl.root));
         
-        avl.remove(5);
+        printTree(avl);
+        avl.remove(8);
         System.out.println("wat");
         printTree(avl);
     }

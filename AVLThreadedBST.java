@@ -1,8 +1,9 @@
+package FinalProject;
+
 import java.util.*;
 
-import ch07.trees.BSTInterface;
-import ch05.collections.LinkedCollection;
-import ch02.stacks.LinkedStack;
+import bookFiles.ch07.trees.BSTInterface;
+import bookFiles.ch02.stacks.LinkedStack;
 
 public class AVLThreadedBST<T> implements BSTInterface<T>
 {
@@ -338,11 +339,6 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                         throw new NoSuchElementException();
                     }
                     T out;
-                    System.out.println(node.getInfo());
-                    System.out.println(node.getLeft());
-                    if (node.getLeft() != null) {System.out.println(node.getLeft().getInfo());}
-                    System.out.println(node.getRight());
-                    if (node.getRight() != null) {System.out.println(node.getRight().getInfo());}
                     if (node.getLeft() == null || nodeIsThread) {
                         out = node.getInfo();
                         nodeIsThread = node.hasThread;
@@ -423,8 +419,6 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             return; // imbalance has already been found in a different subtree
         }
         int balance = balanceFactor(node);
-        //System.out.println(balance);
-        //System.out.println(node.getInfo());
         if (balance < -1) { // too left heavy
             if (balanceFactor(node.getLeft()) > 0) {
                 rotateRight(node);
@@ -452,68 +446,61 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         ThreadedBSTNode<T> rightChild = node.getRight();
         ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
         nodeCopy.setLeft(node.getLeft());
-        //System.out.println(rightChild.getInfo());
-        //System.out.println(rightChild.getLeft());
-        node.setLeft(nodeCopy);
-        if (rightChild != null) {
-            if (rightChild.getLeft() != null) {nodeCopy.setRight(rightChild.getLeft());}
-            else {
-               nodeCopy.setRight(rightChild);
-               //nodeCopy.hasThread = true;
-            }
-            node.setInfo(rightChild.getInfo());
-            node.setRight(rightChild.getRight());
+        if (rightChild.getLeft() != null) {
+            nodeCopy.setRight(rightChild.getLeft());
+        } else {
+            nodeCopy.setRight(node);
+            nodeCopy.hasThread = true;
         }
+        node.setLeft(nodeCopy);
+        node.setInfo(rightChild.getInfo());
+        node.setRight(rightChild.getRight());
     }
 
     private void rotateRight(ThreadedBSTNode<T> node) {
-        //System.out.println("oof");
         ThreadedBSTNode<T> leftChild = node.getLeft();
         ThreadedBSTNode<T> nodeCopy = new ThreadedBSTNode<>(node.getInfo());
-        System.out.println(node.getLeft());
         nodeCopy.setRight(node.getRight());
+        if (!leftChild.hasThread) {nodeCopy.setLeft(leftChild.getRight());}
         node.setRight(nodeCopy);
-        if (leftChild != null) {
-            if (!leftChild.hasThread) {nodeCopy.setLeft(leftChild.getRight());}
-            node.setInfo(leftChild.getInfo());
-            node.setLeft(leftChild.getLeft());
-        }
-        
+        node.setInfo(leftChild.getInfo());
+        node.setLeft(leftChild.getLeft());
     }
 
     public int balanceFactor(ThreadedBSTNode<T> node) {
+        if (node.hasThread) {
+            return -height(node.getLeft());
+        }
         return height(node.getRight()) - height(node.getLeft());
     }
 
     private int height(ThreadedBSTNode<T> node) {
-        int maxDepth = 0;
-        Stack<ThreadedBSTNode<T>> stack = new Stack<>();
-        stack.push(node);
-        int depth = 1;
-        int branchDepth = 1;
-        while (!stack.empty()) {
-            node = stack.pop();
-            if (node == null || (node.getLeft() == null && node.getRight() == null)) {
-                if (depth > maxDepth) {
-                    maxDepth = depth;
-                }
-                depth -= branchDepth;
-                branchDepth = 1;
-            } else {
-                if (node.getLeft() == null || node.getRight() == null) {
-                    branchDepth++;
-                }
-                if (node.getRight() != null){
-                    stack.push(node.getRight());
-                    depth++;
-                }
-                if (node.getLeft() != null) {
-                    stack.push(node.getLeft());
-                    depth++;
-                }
-            }
+        if (node == null) {
+            return 0;
         }
-        return maxDepth;
+        ThreadedBSTNode<T> left = node.getLeft();
+        ThreadedBSTNode<T> right;
+        if (node.hasThread) {
+            right = null;
+        } else {
+            right = node.getRight();
+        }
+        if (left == null && right == null) {
+            return 1;
+        }
+        if (left == null) {
+            return height(right)+1;
+        }
+        if (right == null) {
+            return height(left)+1;
+        }
+        int lh = height(left);
+        int rh = height(right);
+        if (lh > rh) {
+            return lh+1;
+        } else {
+            return rh+1;
+        }
     }
 
 }

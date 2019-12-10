@@ -419,9 +419,9 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
     }
 
     private void recReBalance(ThreadedBSTNode<T> node) {//TODO: make less inefficient
-        //if (isBalanced) {
-            //return; // imbalance has already been found in a different subtree
-        //}
+        if (isBalanced) {
+            return; // imbalance has already been found in a different subtree
+        }
         int balance = balanceFactor(node);
         //System.out.println(balance);
         //System.out.println(node.getInfo());
@@ -474,7 +474,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         nodeCopy.setRight(node.getRight());
         node.setRight(nodeCopy);
         if (leftChild != null) {
-            nodeCopy.setLeft(leftChild.getRight());
+            if (!leftChild.hasThread) {nodeCopy.setLeft(leftChild.getRight());}
             node.setInfo(leftChild.getInfo());
             node.setLeft(leftChild.getLeft());
         }

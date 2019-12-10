@@ -151,7 +151,8 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
 
    public T get(T element)
    {
-      if (contains(element)) {return getNode(element).getInfo();}
+      ThreadedBSTNode<T> node = getNode(element);
+      if (node != null) {return node.getInfo();}
       return null;
    }
 
@@ -233,7 +234,6 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
             editNode = editNode.getRight();
          }
          editNode.setRight(null);
-         editNode.hasThread = false;
 
          //if removeNode has a left link, but not a right, we can remove it easily, similarly to when it didn't have a left link
          if (removeNode.getRight() == null)
@@ -243,7 +243,15 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                if (preNode.getRight() == removeNode) {preNode.setRight(removeNode.getRight());}
                else {preNode.setLeft(removeNode.getRight());}
             }
-            else {root = removeNode.getLeft();}
+            else 
+            {
+               root = removeNode.getLeft();
+               if (root.hasThread == true)
+               {
+                  root.hasThread = false;
+                  root.setRight(null);
+               }
+            }
          }
          else
          {

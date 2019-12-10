@@ -10,16 +10,15 @@ public class AVLTest {
         avl.add(1);
         avl.add(2);
         avl.add(3);
-        printTree(avl);
         avl.add(4);
-        printTree(avl);
         avl.add(5);
-        printTree(avl);
         avl.add(6);
         avl.add(7);
         avl.add(8);
         avl.add(9);
         avl.add(10);
+        System.out.println(avl.get(11));
+        System.out.println();
         printTree(avl);
         Iterator<Integer> iterator = avl.getIterator(Traversal.Preorder);
         while (iterator.hasNext()) {

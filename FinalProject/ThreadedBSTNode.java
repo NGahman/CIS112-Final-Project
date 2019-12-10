@@ -1,3 +1,8 @@
+<<<<<<< Updated upstream:ThreadedBSTNode.java
+=======
+package FinalProject;
+
+>>>>>>> Stashed changes:FinalProject/ThreadedBSTNode.java
 import support.BSTNode;
 
 public class ThreadedBSTNode<T> extends BSTNode<T> {

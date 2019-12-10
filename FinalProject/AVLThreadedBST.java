@@ -485,7 +485,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
         node.setLeft(leftChild.getLeft());
     }
 
-    public int balanceFactor(ThreadedBSTNode<T> node) {
+    protected int balanceFactor(ThreadedBSTNode<T> node) {
         if (node.hasThread) {
             return -height(node.getLeft());
         }

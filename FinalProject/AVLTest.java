@@ -28,7 +28,7 @@ public class AVLTest {
         
         printTree(avl);
         avl.remove(8);
-        System.out.println("wat");
+        System.out.println();
         printTree(avl);
     }
 

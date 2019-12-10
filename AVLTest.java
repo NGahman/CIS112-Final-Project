@@ -22,11 +22,12 @@ public class AVLTest
          System.out.println(avl.get(i));
       }
       System.out.println();
-      System.out.println(avl.min());
-      System.out.println(avl.max());
-      System.out.println(avl.size());
-      System.out.println();
+      //System.out.println(avl.min());
+      //System.out.println(avl.max());
+      //System.out.println(avl.size());
+      //System.out.println();
       //avl.reBalance();
+      System.out.println();
       Iterator<Integer> i = avl.getIterator(Traversal.Inorder);
       
       while (i.hasNext())

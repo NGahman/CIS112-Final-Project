@@ -3,7 +3,6 @@ package FinalProject;
 import java.util.*;
 
 import ch07.trees.BSTInterface;
-import ch05.collections.LinkedCollection;
 import ch02.stacks.LinkedStack;
 
 public class AVLThreadedBST<T> implements BSTInterface<T>

@@ -43,6 +43,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
    {
       if (isEmpty()) {return null;}
       ThreadedBSTNode<T> search = root;
+      if (node == search) {return null;}
       do
       {
          if (search.getLeft() == node || search.getRight() == node) {return search;}
@@ -229,7 +230,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
          //If the target has a left link, the threading needs to be removed before the node.
          //This is found at the max node of the left subtree.
          editNode = removeNode.getLeft();
-         while (editNode.getRight() != removeNode)
+         while (editNode.getRight() != removeNode  && editNode.getRight() != null)
          {
             editNode = editNode.getRight();
          }
@@ -299,6 +300,7 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                removeLeftNode.setLeft(removeNode.getLeft());
                removeLeftNode.setRight(removeNode.getRight());
                removeLeftNode.hasThread = removeNode.hasThread;
+               if (removeNode == root) {root = removeLeftNode;}
             }
             else
             {
@@ -318,11 +320,12 @@ public class AVLThreadedBST<T> implements BSTInterface<T>
                removeRightNode.setLeft(removeNode.getLeft());
                removeRightNode.setRight(removeNode.getRight());
                removeRightNode.hasThread = removeNode.hasThread;
+               if (removeNode == root) {root = removeRightNode;}
             }
          }
       }
       numElements--;
-      reBalance();
+      //reBalance();
       return true;
    }
 

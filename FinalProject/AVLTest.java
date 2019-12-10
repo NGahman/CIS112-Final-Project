@@ -25,6 +25,10 @@ public class AVLTest {
             System.out.println(iterator.next());
         }
         System.out.println(avl.balanceFactor(avl.root));
+        
+        avl.remove(5);
+        System.out.println("wat");
+        printTree(avl);
     }
 
     private static void printTree(AVLThreadedBST avl) {
